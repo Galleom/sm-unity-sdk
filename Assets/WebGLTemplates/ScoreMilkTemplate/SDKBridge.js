@@ -1,8 +1,11 @@
+// The Score Milk SDK Bridge is responsible for
+// relaying frontend messages to the game
+
 window.gameLoaded = () => {
 	window.parent.postMessage({
 		message: 'gameLoaded',
 		data: {
-			version: '0.2.0',
+			version: '0.2.2',
 			platform: 'Unity'
 		}
 	}, "*");

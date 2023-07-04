@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>{{{ PRODUCT_NAME }}}</title>
+    <title>>{{{ PRODUCT_NAME }}}</title>
     <link rel="shortcut icon" href="/public/TemplateData/favicon.ico">
     <link rel="stylesheet" href="/public/TemplateData/style.css">
     <style>
@@ -45,6 +45,7 @@
 		<div id="unity-container" class="unity-desktop">
 		  <canvas id="unity-canvas"></canvas>
 		</div>
+    <div class="loader" id="loader"></div>
 		<div id="loading-cover" style="display:none;">
 		  <div id="unity-loading-bar">
 			<div id="unity-progress-bar-empty">
@@ -56,13 +57,13 @@
 		</div>
 	</div>
     <div id="unity-fullscreen-button" style="display: none;"></div>
-		<script src="/public/scoremilk.js"></script>
+		<script src="/public/SDKBridge.js"></script>
 		<script type="text/javascript" src="/public/xmlhttprequest-length-computable.min.js"></script>
     <script>
       const hideFullScreenButton = "true";
       const buildUrl = "/public/Build";
       const loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
-      const config = {
+	  const config = {
         dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
         frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
         codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
@@ -74,6 +75,7 @@
 
       const container = document.querySelector("#unity-container");
       const canvas = document.querySelector("#unity-canvas");
+	    const loadingCircle = document.getElementById('loader');
       const loadingCover = document.querySelector("#loading-cover");
       const loadingMask = document.querySelector("#unity-progress-bar-mask");
       const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
@@ -96,16 +98,23 @@
       }());
 
      
-      loadingCover.style.display = "";
 
       const script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
           loadingMask.style["-webkit-mask-size"] = `${100 * progress}% 100%`;
+		  loadingMask.style["display"] = `flex`;
+		  loadingCover.style.display = "flex";
+          if (progress*100 < 10){
+            loadingCircle.style["display"] = `flex`;
+          } else {
+            loadingCircle.style["display"] = `none`;
+          }
         }).then((unityInstance) => {
           window.unityInstance = unityInstance;
           loadingCover.style.display = "none";
+          loadingCircle.style["display"] = "none";
           if (canFullscreen) {
             if (!hideFullScreenButton) {
               fullscreenButton.style.display = "";
